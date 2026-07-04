@@ -19,6 +19,8 @@ use tabled::{
 enum EntryType {
     File,
     Dir,
+    Shortcut,
+    Unknown,
 }
 
 #[derive(Debug, Tabled, Serialize)]
@@ -79,10 +81,11 @@ fn get_files(path: &Path) -> Vec<FileEntry> {
     data
     // TODO: Flag para arquivos e pastas ocultas
     // TODO: Link para abrir a pasta e arquivos no explorador de arquivos
+    // TODO: Comando para abrir arquivo
 }
 
 fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
-    if let Ok(metadata) = fs::metadata(&file.path()) {
+    if let Ok(metadata) = fs::metadata(file.path()) {
         data.push(FileEntry {
             name: file
                 .file_name()
@@ -91,8 +94,18 @@ fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
             // FIXME: limitar tamanho de nome de arquivo
             e_type: if metadata.is_dir() {
                 EntryType::Dir
-            } else {
+            } else if file
+                .path()
+                .extension()
+                .unwrap_or_default()
+                .to_ascii_uppercase()
+                == "LNK"
+            {
+                EntryType::Shortcut
+            } else if metadata.is_file() {
                 EntryType::File
+            } else {
+                EntryType::Unknown
             },
             len_bytes: metadata.len(),
             modified: if let Ok(modi) = metadata.modified() {
@@ -119,12 +132,15 @@ fn print_table(path: PathBuf) {
 }
 
 fn print_title(path: &PathBuf) {
-    if let Ok(canonic_path) = dunce::canonicalize(path) {
-        let title = canonic_path.display();
-        println!("Current path: {}", title);
-    } else {
-        println!("Error while reading current path")
+    match dunce::canonicalize(path) {
+        Ok(canonic_path) => println!("Current path: {}", canonic_path.display()),
+        Err(err) => println!("Error while reading current path title: {}", err),
     }
-    // TODO: Refatorar para match
+    // if let Ok(canonic_path) = dunce::canonicalize(path) {
+    //     // let title = canonic_path.display();
+    //     println!("Current path: {}", canonic_path.display());
+    // } else {
+    //     println!("Error while reading current path")
+    // }
     // TODO: Printar com link para pasta no explorador de arquivos
 }
