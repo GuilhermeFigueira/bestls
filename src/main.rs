@@ -55,6 +55,8 @@ fn main() {
                     serde_json::to_string(&files).unwrap_or("cannot parse json".to_string())
                 );
             } else {
+                print_title(&path);
+                // TODO: Link para abrir a pasta no explorador de arquivos
                 print_table(path);
             }
         } else {
@@ -67,14 +69,16 @@ fn main() {
 
 fn get_files(path: &Path) -> Vec<FileEntry> {
     let mut data = Vec::default();
-    if let Ok(read_dir) = fs::read_dir(path) {
-        for entry in read_dir {
+    if let Ok(dir) = fs::read_dir(path) {
+        for entry in dir {
             if let Ok(file) = entry {
                 map_data(file, &mut data);
             }
         }
     }
     data
+    // TODO: Flag para arquivos e pastas ocultas
+    // TODO: Link para abrir a pasta e arquivos no explorador de arquivos
 }
 
 fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
@@ -84,6 +88,7 @@ fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
                 .file_name()
                 .into_string()
                 .unwrap_or("unknown name".into()),
+            // FIXME: limitar tamanho de nome de arquivo
             e_type: if metadata.is_dir() {
                 EntryType::Dir
             } else {
@@ -93,11 +98,13 @@ fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
             modified: if let Ok(modi) = metadata.modified() {
                 let date: DateTime<Utc> = modi.into();
                 format!("{}", date.format("%a %b %e %Y"))
+                // TODO: Outros formatos
             } else {
                 String::default()
             },
         });
     }
+    // TODO: Retornar tamanho de pastas
 }
 
 fn print_table(path: PathBuf) {
@@ -109,4 +116,15 @@ fn print_table(path: PathBuf) {
     table.modify(Columns::one(3), Color::FG_BRIGHT_YELLOW);
     table.modify(Rows::first(), Color::FG_BRIGHT_GREEN);
     println!("{}", table)
+}
+
+fn print_title(path: &PathBuf) {
+    if let Ok(canonic_path) = dunce::canonicalize(path) {
+        let title = canonic_path.display();
+        println!("Current path: {}", title);
+    } else {
+        println!("Error while reading current path")
+    }
+    // TODO: Refatorar para match
+    // TODO: Printar com link para pasta no explorador de arquivos
 }
