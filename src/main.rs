@@ -92,21 +92,7 @@ fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
                 .into_string()
                 .unwrap_or("unknown name".into()),
             // FIXME: limitar tamanho de nome de arquivo
-            e_type: if metadata.is_dir() {
-                EntryType::Dir
-            } else if file
-                .path()
-                .extension()
-                .unwrap_or_default()
-                .to_ascii_uppercase()
-                == "LNK"
-            {
-                EntryType::Shortcut
-            } else if metadata.is_file() {
-                EntryType::File
-            } else {
-                EntryType::Unknown
-            },
+            e_type: get_entry_type(&metadata, &file.path()),
             len_bytes: metadata.len(),
             modified: if let Ok(modi) = metadata.modified() {
                 let date: DateTime<Utc> = modi.into();
@@ -143,4 +129,18 @@ fn print_title(path: &PathBuf) {
     //     println!("Error while reading current path")
     // }
     // TODO: Printar com link para pasta no explorador de arquivos
+}
+
+fn get_entry_type(metadata: &fs::Metadata, path: &PathBuf) -> EntryType {
+    if metadata.is_dir() {
+        EntryType::Dir
+    } else if metadata.is_file() {
+        if path.extension().unwrap_or_default().to_ascii_lowercase() == "lnk" {
+            EntryType::Shortcut
+        } else {
+            EntryType::File
+        }
+    } else {
+        EntryType::Unknown
+    }
 }
