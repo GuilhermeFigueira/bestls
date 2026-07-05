@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use clap::Parser;
+use osc8::Hyperlink;
 use owo_colors::OwoColorize;
 use serde::Serialize;
 use std::{
@@ -7,6 +8,7 @@ use std::{
     path::{Path, PathBuf},
 };
 use strum_macros::Display;
+use supports_hyperlinks::Stream;
 use tabled::{
     Table, Tabled,
     settings::{
@@ -46,6 +48,13 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
+    // NOTE: Caso programa escalar, transformar em varíavel global com lazylock, ou um "config"
+    let supports_hyperlinks: bool = if supports_hyperlinks::on(Stream::Stdout) {
+        true
+    } else {
+        false
+    };
+
     let path = cli.path.unwrap_or(PathBuf::from("."));
 
     if let Ok(does_exist) = fs::exists(&path) {
@@ -57,7 +66,7 @@ fn main() {
                     serde_json::to_string(&files).unwrap_or("cannot parse json".to_string())
                 );
             } else {
-                print_title(&path);
+                print_title(&path, supports_hyperlinks);
                 // TODO: Link para abrir a pasta no explorador de arquivos
                 print_table(path);
             }
@@ -117,18 +126,25 @@ fn print_table(path: PathBuf) {
     println!("{}", table)
 }
 
-fn print_title(path: &PathBuf) {
+fn print_title(path: &PathBuf, supports_hyperlinks: bool) {
     match dunce::canonicalize(path) {
-        Ok(canonic_path) => println!("Current path: {}", canonic_path.display()),
+        Ok(canonic_path) => {
+            if supports_hyperlinks {
+                let formatted_link = format!(
+                    "file:///{}",
+                    canonic_path.to_string_lossy().replace("\\", "/")
+                );
+                let hyperlink = Hyperlink::new(&formatted_link);
+                println!(
+                    "Current path: {hyperlink}{}{hyperlink:#}",
+                    canonic_path.display()
+                );
+            } else {
+                println!("Current path: {}", canonic_path.display())
+            }
+        }
         Err(err) => println!("Error while reading current path title: {}", err),
     }
-    // if let Ok(canonic_path) = dunce::canonicalize(path) {
-    //     // let title = canonic_path.display();
-    //     println!("Current path: {}", canonic_path.display());
-    // } else {
-    //     println!("Error while reading current path")
-    // }
-    // TODO: Printar com link para pasta no explorador de arquivos
 }
 
 fn get_entry_type(metadata: &fs::Metadata, path: &PathBuf) -> EntryType {
