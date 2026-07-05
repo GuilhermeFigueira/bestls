@@ -40,9 +40,16 @@ struct FileEntry {
 #[derive(Debug, Parser)]
 #[command(version, about, long_about = "Best Ls command ever")]
 struct Cli {
+    /// Path to the folder to list (defaults to the current directory)
     path: Option<PathBuf>,
+
+    /// Parse the output to json
     #[arg(short, long)]
     json: bool,
+
+    /// Toggle default hidden-file visibility (does not list files)
+    #[arg(short, long)]
+    all: bool,
 }
 
 fn main() {
