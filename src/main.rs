@@ -49,6 +49,10 @@ struct Cli {
 
     /// Toggle default hidden-file visibility (does not list files)
     #[arg(short, long)]
+    toggle_all: bool,
+
+    /// Show all files
+    #[arg(short, long)]
     all: bool,
 }
 
