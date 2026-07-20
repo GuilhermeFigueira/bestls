@@ -16,6 +16,10 @@ pub struct Cli {
     #[arg(short, long)]
     pub(crate) toggle_all: bool,
 
+    /// Toggle whether folder sizes are calculated and displayed
+    #[arg(short('F'), long)]
+    pub(crate) toggle_show_folder_size: bool,
+
     /// Show all files
     #[arg(short, long)]
     pub(crate) all: bool,
