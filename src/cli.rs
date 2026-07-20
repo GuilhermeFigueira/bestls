@@ -13,7 +13,7 @@ pub struct Cli {
     pub(crate) json: bool,
 
     /// Toggle default hidden-file visibility (does not list files)
-    #[arg(short, long)]
+    #[arg(short('A'), long)]
     pub(crate) toggle_all: bool,
 
     /// Toggle whether folder sizes are calculated and displayed
