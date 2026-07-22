@@ -47,8 +47,7 @@ This project has been a hands-on way to practice:
 
 ## Planned / In progress
 
-Things I want to explore and add on my own:
-... WIP
+[]
 
 ## Credits
 
