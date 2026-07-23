@@ -6,8 +6,8 @@ use std::{
 };
 
 #[derive(Deserialize, Debug, Serialize)]
-pub(super) struct Config {
-    pub(super) display: Display,
+pub(crate) struct Config {
+    pub(crate) display: Display,
 }
 
 impl Config {
@@ -61,9 +61,9 @@ impl Default for Config {
 }
 
 #[derive(Deserialize, Debug, Serialize)]
-pub(super) struct Display {
-    pub(super) show_hidden: bool,
-    pub(super) show_folder_size: bool,
+pub(crate) struct Display {
+    pub(crate) show_hidden: bool,
+    pub(crate) show_folder_size: bool,
 }
 
 impl Default for Display {
