@@ -20,7 +20,7 @@ fn main() {
 
 fn run() -> Result<()> {
     let cli = Cli::parse();
-    let context = AppContext::load().context("Error creating the app context")?;
+    let context = AppContext::load().context("Error creating the project context")?;
 
     let path = cli.path.unwrap_or(PathBuf::from("."));
     let canonic_path = dunce::canonicalize(path).context("Error canonicalizing path")?;
