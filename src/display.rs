@@ -1,6 +1,7 @@
-use crate::entry::get_files;
+use crate::{context::AppContext, entry::get_files};
+use anyhow::{Context, Ok, Result};
 use osc8::Hyperlink;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tabled::{
     Table,
     settings::{
@@ -9,35 +10,32 @@ use tabled::{
     },
 };
 
-pub fn print_table(path: PathBuf) {
-    let files = get_files(&path);
+pub fn print_json(path: &Path) -> Result<()> {
+    let files = get_files(path)?;
+    let json_files = serde_json::to_string(&files).context("Cannot parse JSON")?;
+    println!("{}", json_files);
+    Ok(())
+}
+
+pub fn print_table(path: &Path) -> Result<()> {
+    let files = get_files(path)?;
     let mut table = Table::new(files);
     table.with(Style::rounded());
     table.modify(Columns::first(), Color::FG_BRIGHT_CYAN);
     table.modify(Columns::one(2), Color::FG_BRIGHT_MAGENTA);
     table.modify(Columns::one(3), Color::FG_BRIGHT_YELLOW);
     table.modify(Rows::first(), Color::FG_BRIGHT_GREEN);
-    println!("{}", table)
+    println!("{}", table);
+    Ok(())
 }
 
-pub fn print_title(path: &PathBuf, supports_hyperlinks: bool) {
-    match dunce::canonicalize(path) {
-        Ok(canonic_path) => {
-            if supports_hyperlinks {
-                let formatted_link = format!(
-                    "file:///{}",
-                    canonic_path.to_string_lossy().replace("\\", "/")
-                );
-                let hyperlink = Hyperlink::new(&formatted_link);
-                println!(
-                    "Current path: {hyperlink}{}{hyperlink:#}",
-                    canonic_path.display()
-                );
-            } else {
-                println!("Current path: {}", canonic_path.display())
-            }
-        }
-        Err(err) => println!("Error while reading current path title: {}", err),
+pub fn print_title(path: &PathBuf, context: AppContext) {
+    if context.supports_hyperlinks {
+        let formatted_link = format!("file:///{}", path.to_string_lossy().replace("\\", "/"));
+        let hyperlink = Hyperlink::new(&formatted_link);
+        println!("Current path: {hyperlink}{}{hyperlink:#}", path.display());
+    } else {
+        println!("Current path: {}", path.display())
     }
     // TODO: Seta para voltar para a pasta pai (caso exista)
 }

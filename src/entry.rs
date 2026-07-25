@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 use std::{
@@ -6,14 +7,6 @@ use std::{
 };
 use strum_macros::Display;
 use tabled::Tabled;
-
-#[derive(Debug, Display, Serialize)]
-pub enum EntryType {
-    File,
-    Dir,
-    Shortcut,
-    Unknown,
-}
 
 #[derive(Debug, Tabled, Serialize)]
 pub struct FileEntry {
@@ -25,6 +18,25 @@ pub struct FileEntry {
     len_bytes: u64,
     #[tabled(rename = "Modified")]
     modified: String,
+}
+
+impl Default for FileEntry {
+    fn default() -> Self {
+        Self {
+            name: String::from("<Unknown File>"),
+            e_type: EntryType::Unknown,
+            len_bytes: 0,
+            modified: String::from("-"),
+        }
+    }
+}
+
+#[derive(Debug, Display, Serialize)]
+pub enum EntryType {
+    File,
+    Dir,
+    Shortcut,
+    Unknown,
 }
 
 pub fn get_entry_type(metadata: &fs::Metadata, path: &PathBuf) -> EntryType {
@@ -47,7 +59,7 @@ pub fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
             name: file
                 .file_name()
                 .into_string()
-                .unwrap_or("unknown name".into()),
+                .unwrap_or_else(|_| FileEntry::default().name),
             // FIXME: limitar tamanho de nome de arquivo
             e_type: get_entry_type(&metadata, &file.path()),
             len_bytes: metadata.len(),
@@ -59,20 +71,27 @@ pub fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
                 String::default()
             },
         });
+    } else {
+        data.push(FileEntry::default());
     }
     // TODO: Retornar tamanho de pastas
 }
 
-pub fn get_files(path: &Path) -> Vec<FileEntry> {
+pub fn get_files(path: &Path) -> Result<Vec<FileEntry>> {
     let mut data = Vec::default();
-    if let Ok(dir) = fs::read_dir(path) {
-        for entry in dir {
-            if let Ok(file) = entry {
-                map_data(file, &mut data);
-            }
+
+    let dir =
+        fs::read_dir(path).with_context(|| format!("Error while reading directory: {:?}", path))?;
+
+    for entry in dir {
+        let file_result = entry;
+        match file_result {
+            Ok(file) => map_data(file, &mut data),
+            Err(_) => data.push(FileEntry::default()),
         }
     }
-    data
+
+    Ok(data)
     // TODO: Flag para arquivos e pastas ocultas
     // TODO: Link para abrir a pasta e arquivos no explorador de arquivos
     // TODO: Comando para abrir arquivo

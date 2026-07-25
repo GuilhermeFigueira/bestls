@@ -1,41 +1,51 @@
 mod cli;
+mod context;
 mod display;
 mod entry;
-mod project;
 
+use anyhow::{Context, Result, ensure};
 use clap::Parser;
 use cli::Cli;
-use config::Config;
-use display::{print_table, print_title};
-use entry::get_files;
+use context::AppContext;
+use display::{print_json, print_table, print_title};
 use owo_colors::OwoColorize;
 use std::{fs, path::PathBuf};
-use supports_hyperlinks::Stream;
 
 fn main() {
-    let config = Config::get();
+    if let Err(e) = run() {
+        eprintln!("{}", format!("Error: {:?}", e).red());
+        std::process::exit(1)
+    }
+}
+
+fn run() -> Result<()> {
     let cli = Cli::parse();
-    // // NOTE: Caso programa escalar, transformar em varíavel global com lazylock, ou um "config"
-    // let supports_hyperlinks: bool = supports_hyperlinks::on(Stream::Stdout);
+    let context = AppContext::load().context("Error creating the app context")?;
 
-    // let path = cli.path.unwrap_or(PathBuf::from("."));
+    let path = cli.path.unwrap_or(PathBuf::from("."));
+    let canonic_path = dunce::canonicalize(path).context("Error canonicalizing path")?;
 
-    // if let Ok(does_exist) = fs::exists(&path) {
-    //     if does_exist {
-    //         if cli.json {
-    //             let files = get_files(&path);
-    //             println!(
-    //                 "{}",
-    //                 serde_json::to_string(&files).unwrap_or("cannot parse json".red().to_string())
-    //             );
-    //         } else {
-    //             print_title(&path, supports_hyperlinks);
-    //             print_table(path);
-    //         }
-    //     } else {
-    //         println!("{}", "Path does not exist".red())
-    //     }
-    // } else {
-    //     println!("{}", "Error reading directory".red())
-    // }
+    // Ensuring path exists
+    ensure!(
+        fs::exists(&canonic_path).with_context(|| {
+            format!(
+                "Error checking if selected path exists: {:?}",
+                &canonic_path
+            )
+        })?,
+        "Path does not exist: {:?}",
+        canonic_path
+    );
+
+    //Ensuring path is a directory
+    ensure!(canonic_path.is_dir(), "Path is not a directory");
+
+    // TODO: Adicionar flags
+    if cli.json {
+        print_json(&canonic_path)?;
+    } else {
+        print_title(&canonic_path, context);
+        print_table(&canonic_path)?;
+    }
+    Ok(())
 }
