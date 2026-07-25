@@ -23,4 +23,8 @@ pub struct Cli {
     /// Show all files
     #[arg(short, long)]
     pub(crate) all: bool,
+
+    /// Print all settings
+    #[arg(short, long)]
+    pub(crate) settings: bool,
 }
