@@ -4,7 +4,7 @@ use directories::ProjectDirs;
 use std::{fs, path::PathBuf};
 use supports_hyperlinks::Stream;
 
-use crate::app_context::config::Config;
+use config::Config;
 
 pub struct AppContext {
     pub(crate) config: config::Config,
@@ -15,11 +15,11 @@ pub struct AppContext {
 
 impl AppContext {
     pub fn load() -> Result<Self> {
-        let proj_dirs =
-            Self::create_and_return_project_dir().context("Failed to load config file")?;
-        let config = Config::load(proj_dirs.config_dir()).context("Failed to load config")?;
+        let proj_dirs = Self::create_and_return_project_dir()
+            .context("Failed to set up project directories")?;
+        let config = Config::load(proj_dirs.config_dir()).context("Failed to load config file")?;
         Ok(Self {
-            config: config,
+            config,
             proj_path: proj_dirs.project_path().to_path_buf(),
             cache_path: proj_dirs.cache_dir().to_path_buf(),
             supports_hyperlinks: supports_hyperlinks::on(Stream::Stdout),
