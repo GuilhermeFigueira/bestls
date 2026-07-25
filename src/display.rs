@@ -33,9 +33,9 @@ pub fn print_title(path: &PathBuf, context: AppContext) {
     if context.supports_hyperlinks {
         let formatted_link = format!("file:///{}", path.to_string_lossy().replace("\\", "/"));
         let hyperlink = Hyperlink::new(&formatted_link);
-        println!("Current path: {hyperlink}{}{hyperlink:#}", path.display());
+        println!("Current path -> {hyperlink}{}{hyperlink:#}", path.display());
     } else {
-        println!("Current path: {}", path.display())
+        println!("Current path -> {}", path.display())
     }
     // TODO: Seta para voltar para a pasta pai (caso exista)
 }
