@@ -54,25 +54,29 @@ pub fn get_entry_type(metadata: &fs::Metadata, path: &PathBuf) -> EntryType {
 }
 
 pub fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
-    if let Ok(metadata) = fs::metadata(file.path()) {
-        data.push(FileEntry {
-            name: file
-                .file_name()
-                .into_string()
-                .unwrap_or_else(|_| FileEntry::default().name),
-            // FIXME: limitar tamanho de nome de arquivo
-            e_type: get_entry_type(&metadata, &file.path()),
-            len_bytes: metadata.len(),
-            modified: if let Ok(modi) = metadata.modified() {
-                let date: DateTime<Utc> = modi.into();
-                format!("{}", date.format("%a %b %e %Y"))
-                // TODO: Outros formatos
-            } else {
-                String::default()
-            },
-        });
-    } else {
-        data.push(FileEntry::default());
+    match fs::metadata(file.path()) {
+        Ok(metadata) => {
+            data.push(FileEntry {
+                name: file
+                    .file_name()
+                    .into_string()
+                    .unwrap_or_else(|_| FileEntry::default().name),
+                // FIXME: limitar tamanho de nome de arquivo
+                e_type: get_entry_type(&metadata, &file.path()),
+                len_bytes: metadata.len(),
+                modified: if let Ok(modi) = metadata.modified() {
+                    let date: DateTime<Utc> = modi.into();
+                    format!("{}", date.format("%a %b %e %Y"))
+                    // TODO: Outros formatos
+                } else {
+                    String::default()
+                },
+            });
+        }
+        Err(e) => {
+            eprintln!("Error reading this file {:?} : {:?}", file.path(), e);
+            data.push(FileEntry::default());
+        }
     }
     // TODO: Retornar tamanho de pastas
 }
