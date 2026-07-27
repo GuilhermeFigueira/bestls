@@ -10,15 +10,15 @@ use tabled::{
     },
 };
 
-pub fn print_json(path: &Path) -> Result<()> {
-    let files = get_files(path)?;
+pub fn print_json(path: &Path, context: &AppContext) -> Result<()> {
+    let files = get_files(path, context)?;
     let json_files = serde_json::to_string(&files).context("Cannot parse JSON")?;
     println!("{}", json_files);
     Ok(())
 }
 
-pub fn print_table(path: &Path) -> Result<()> {
-    let files = get_files(path)?;
+pub fn print_table(path: &Path, context: &AppContext) -> Result<()> {
+    let files = get_files(path, context)?;
     let mut table = Table::new(files);
     table.with(Style::rounded());
     table.modify(Columns::first(), Color::FG_BRIGHT_CYAN);
@@ -29,7 +29,7 @@ pub fn print_table(path: &Path) -> Result<()> {
     Ok(())
 }
 
-pub fn print_title(path: &PathBuf, context: AppContext) {
+pub fn print_title(path: &PathBuf, context: &AppContext) {
     if context.supports_hyperlinks {
         let formatted_link = format!("file:///{}", path.to_string_lossy().replace("\\", "/"));
         let hyperlink = Hyperlink::new(&formatted_link);

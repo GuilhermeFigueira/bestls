@@ -41,11 +41,12 @@ fn run() -> Result<()> {
     ensure!(canonic_path.is_dir(), "Path is not a directory");
 
     // TODO: Adicionar flags
+
     if cli.json {
-        print_json(&canonic_path)?;
+        print_json(&canonic_path, &context)?;
     } else {
-        print_title(&canonic_path, context);
-        print_table(&canonic_path)?;
+        print_title(&canonic_path, &context);
+        print_table(&canonic_path, &context)?;
     }
     Ok(())
 }

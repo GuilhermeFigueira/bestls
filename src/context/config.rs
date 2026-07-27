@@ -64,6 +64,7 @@ impl Default for Config {
 pub(crate) struct Display {
     pub(crate) show_hidden: bool,
     pub(crate) show_folder_size: bool,
+    pub(crate) file_name_size: usize,
 }
 
 impl Default for Display {
@@ -71,6 +72,7 @@ impl Default for Display {
         Self {
             show_hidden: true,
             show_folder_size: true,
+            file_name_size: 25,
         }
     }
 }

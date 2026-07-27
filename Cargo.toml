@@ -19,5 +19,6 @@ strum_macros = "0.28.0"
 supports-hyperlinks = "3.2.0"
 tabled = "0.21.0"
 toml = "1.1.2"
+unicode-ellipsis = "0.6.0"
 
 # TODO Configurar build

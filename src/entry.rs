@@ -7,6 +7,9 @@ use std::{
 };
 use strum_macros::Display;
 use tabled::Tabled;
+use unicode_ellipsis;
+
+use crate::context::AppContext;
 
 #[derive(Debug, Tabled, Serialize)]
 pub struct FileEntry {
@@ -53,15 +56,19 @@ pub fn get_entry_type(metadata: &fs::Metadata, path: &PathBuf) -> EntryType {
     }
 }
 
-pub fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
+pub fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>, context: &AppContext) {
     match fs::metadata(file.path()) {
         Ok(metadata) => {
+            let file_name = file
+                .file_name()
+                .into_string()
+                .unwrap_or_else(|_| FileEntry::default().name);
             data.push(FileEntry {
-                name: file
-                    .file_name()
-                    .into_string()
-                    .unwrap_or_else(|_| FileEntry::default().name),
-                // FIXME: limitar tamanho de nome de arquivo
+                name: unicode_ellipsis::truncate_str(
+                    &file_name,
+                    context.config.display.file_name_size,
+                )
+                .to_string(),
                 e_type: get_entry_type(&metadata, &file.path()),
                 len_bytes: metadata.len(),
                 modified: if let Ok(modi) = metadata.modified() {
@@ -81,7 +88,7 @@ pub fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>) {
     // TODO: Retornar tamanho de pastas
 }
 
-pub fn get_files(path: &Path) -> Result<Vec<FileEntry>> {
+pub fn get_files(path: &Path, context: &AppContext) -> Result<Vec<FileEntry>> {
     let mut data = Vec::default();
 
     let dir =
@@ -90,7 +97,7 @@ pub fn get_files(path: &Path) -> Result<Vec<FileEntry>> {
     for entry in dir {
         let file_result = entry;
         match file_result {
-            Ok(file) => map_data(file, &mut data),
+            Ok(file) => map_data(file, &mut data, context),
             Err(_) => data.push(FileEntry::default()),
         }
     }
