@@ -74,7 +74,6 @@ pub fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>, context: &AppCont
                 modified: if let Ok(modi) = metadata.modified() {
                     let date: DateTime<Utc> = modi.into();
                     format!("{}", date.format("%a %b %e %Y"))
-                    // TODO: Outros formatos
                 } else {
                     String::default()
                 },
@@ -103,7 +102,9 @@ pub fn get_files(path: &Path, context: &AppContext) -> Result<Vec<FileEntry>> {
     }
 
     Ok(data)
-    // TODO: Flag para arquivos e pastas ocultas
+    // TODO: Flag para arquivos e pastas ocultas, atualmente sempre mostra pastas ocultas
+
     // TODO: Link para abrir a pasta e arquivos no explorador de arquivos
+
     // TODO: Comando para abrir arquivo
 }

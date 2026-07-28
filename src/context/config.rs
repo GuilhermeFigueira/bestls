@@ -26,6 +26,11 @@ impl Config {
         }
     }
 
+    // pub(crate) fn save(self) -> Result<()> {
+
+    // }
+    // TODO: Função de salvar configs
+
     fn read_existing_config(path: &Path) -> Result<Config> {
         let content = fs::read_to_string(path)
             .with_context(|| format!("Error reading config file: {:?}", path))?;
@@ -38,7 +43,8 @@ impl Config {
             }
         }
     }
-
+    // TODO: Adicionar campos novos caso atualize após criação de arquivo de configuração, caso contrario
+    // Irá dar como inválido e usará default
     fn write_default_config(path: &Path) -> Result<Config> {
         let config = Self::default();
 

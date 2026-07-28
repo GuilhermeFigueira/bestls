@@ -8,6 +8,7 @@ use config::Config;
 
 pub struct AppContext {
     pub(crate) config: config::Config,
+    // FIXME: Usar campos
     pub(crate) proj_path: PathBuf,
     pub(crate) cache_path: PathBuf,
     pub(crate) supports_hyperlinks: bool,
