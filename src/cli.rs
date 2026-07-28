@@ -1,9 +1,14 @@
 use std::path::PathBuf;
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
-#[command(version, about, long_about = "Best Ls command ever")]
+#[command(
+    version,
+    about,
+    long_about = "Best Ls command ever",
+    author = "GuilhermeFigueira"
+)]
 pub struct Cli {
     /// Path to the folder to list (defaults to the current directory)
     pub(crate) path: Option<PathBuf>,
@@ -12,19 +17,30 @@ pub struct Cli {
     #[arg(short, long)]
     pub(crate) json: bool,
 
-    /// Toggle default hidden-file visibility (does not list files)
-    #[arg(short('A'), long)]
-    pub(crate) toggle_all: bool,
-
-    /// Toggle whether folder sizes are calculated and displayed
-    #[arg(short('F'), long)]
-    pub(crate) toggle_show_folder_size: bool,
-
     /// Show all files
     #[arg(short, long)]
     pub(crate) all: bool,
 
+    #[command(subcommand)]
+    pub(crate) config_action: Option<ConfigAction>,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum ConfigAction {
+    /// Toggle default display behaviors (hidden files, folder sizes)
+    Toggle {
+        /// Toggle default hidden-file visibility
+        #[arg(short('A'), long)]
+        all: bool,
+
+        /// Toggle whether folder sizes are calculated and displayed
+        #[arg(short('F'), long)]
+        folder_size: bool,
+    },
+
     /// Print all settings
-    #[arg(short, long)]
-    pub(crate) settings: bool,
+    Settings,
+
+    /// Change the default size of file and directory names (does not list files)
+    FileNameSize { size: usize },
 }
