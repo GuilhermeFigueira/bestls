@@ -90,8 +90,7 @@ fn apply_config_action(config_actions: &ConfigAction, config: &mut Config) -> bo
             }
         }
         ConfigAction::Settings => {
-            // TODO: print settings
-            println!("Settings");
+            println!("{}", config);
             false
         }
         ConfigAction::Toggle { all, folder_size } => {

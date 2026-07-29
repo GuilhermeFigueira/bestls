@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::{
-    fs,
+    fmt, fs,
     path::{Path, PathBuf},
 };
 
@@ -62,6 +62,19 @@ impl Default for Config {
         Self {
             display: Display::default(),
         }
+    }
+}
+
+impl fmt::Display for Config {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+        write!(
+            fmt,
+            "[Display Options] \n\
+            File name length: {} \n\
+            Showing folder size: {} \n\
+            Showing hidden files: {}",
+            self.display.file_name_length, self.display.show_folder_size, self.display.show_hidden
+        )
     }
 }
 
