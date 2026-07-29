@@ -74,12 +74,20 @@ fn resolve_config_actions(
 fn apply_config_action(config_actions: &ConfigAction, config: &mut Config) -> bool {
     match config_actions {
         ConfigAction::FileNameLength { size } => {
-            config.display.file_name_length = *size;
-            println!(
-                "The file name lenght is now: {}",
-                config.display.file_name_length
-            );
-            true
+            if let Some(size) = size {
+                config.display.file_name_length = *size;
+                println!(
+                    "The file name length is now: {}",
+                    config.display.file_name_length
+                );
+                true
+            } else {
+                println!(
+                    "The file name length is: {}",
+                    config.display.file_name_length
+                );
+                false
+            }
         }
         ConfigAction::Settings => {
             // TODO: print settings
@@ -92,16 +100,25 @@ fn apply_config_action(config_actions: &ConfigAction, config: &mut Config) -> bo
                 println!(
                     "Showing hidden files is now: {}",
                     config.display.show_hidden
-                )
+                );
             }
             if *folder_size {
                 config.display.show_folder_size = !config.display.show_folder_size;
                 println!(
                     "Showing folder size is now: {}",
                     config.display.show_folder_size
-                )
+                );
             }
-            true
+            if *all || *folder_size {
+                true
+            } else {
+                println!(
+                    "Showing folder size is: {}",
+                    config.display.show_folder_size
+                );
+                println!("Showing hidden files is: {}", config.display.show_hidden);
+                false
+            }
         }
     }
 }

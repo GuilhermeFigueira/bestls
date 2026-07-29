@@ -42,5 +42,5 @@ pub enum ConfigAction {
     Settings,
 
     /// Change the default size of file and directory names (does not list files)
-    FileNameLength { size: usize },
+    FileNameLength { size: Option<usize> },
 }
