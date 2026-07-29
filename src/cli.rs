@@ -22,12 +22,12 @@ pub struct Cli {
     pub(crate) all: bool,
 
     #[command(subcommand)]
-    pub(crate) config_action: Option<ConfigAction>,
+    pub(crate) config_actions: Option<ConfigAction>,
 }
 
 #[derive(Debug, Subcommand)]
 pub enum ConfigAction {
-    /// Toggle default display behaviors (hidden files, folder sizes)
+    /// Toggle default display behaviors (hidden files, folder sizes) (does not list files)
     Toggle {
         /// Toggle default hidden-file visibility
         #[arg(short('A'), long)]
@@ -38,9 +38,9 @@ pub enum ConfigAction {
         folder_size: bool,
     },
 
-    /// Print all settings
+    /// Print all settings (does not list files)
     Settings,
 
     /// Change the default size of file and directory names (does not list files)
-    FileNameSize { size: usize },
+    FileNameLength { size: usize },
 }

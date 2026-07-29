@@ -66,7 +66,7 @@ pub fn map_data(file: fs::DirEntry, data: &mut Vec<FileEntry>, context: &AppCont
             data.push(FileEntry {
                 name: unicode_ellipsis::truncate_str(
                     &file_name,
-                    context.config.display.file_name_size,
+                    context.config.display.file_name_length,
                 )
                 .to_string(),
                 e_type: get_entry_type(&metadata, &file.path()),
