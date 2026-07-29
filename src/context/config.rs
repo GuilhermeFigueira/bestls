@@ -6,6 +6,7 @@ use std::{
 };
 
 #[derive(Deserialize, Debug, Serialize)]
+#[serde(default)]
 pub(crate) struct Config {
     pub(crate) display: Display,
 }
@@ -38,8 +39,7 @@ impl Config {
             }
         }
     }
-    // TODO: Adicionar campos novos caso atualize após criação de arquivo de configuração, caso contrario
-    // Irá dar como inválido e usará default
+
     fn write_default_config(path: &Path) -> Result<Config> {
         Self::default().save(path)?;
         Ok(Self::default())
@@ -66,6 +66,7 @@ impl Default for Config {
 }
 
 #[derive(Deserialize, Debug, Serialize)]
+#[serde(default)]
 pub(crate) struct Display {
     pub(crate) show_hidden: bool,
     pub(crate) show_folder_size: bool,
