@@ -89,7 +89,7 @@ pub(crate) struct Display {
 impl Default for Display {
     fn default() -> Self {
         Self {
-            show_hidden: true,
+            show_hidden: false,
             show_folder_size: false,
             file_name_length: 25,
         }
