@@ -8,8 +8,10 @@ edition = "2024"
 anyhow = "1.0.104"
 chrono = "0.4.45"
 clap = {version = "4.5.39", features = ["derive"]}
+dir-size = "0.1.1"
 directories = "6.0.0"
 dunce = "1.0.5"
+human_bytes = "0.4.3"
 osc8 = "0.1.0"
 owo-colors = "4.3.0"
 serde = { version = "1.0.228", features = ["derive"] }

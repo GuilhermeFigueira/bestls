@@ -37,5 +37,4 @@ pub fn print_title(path: &PathBuf, context: &AppContext) {
     } else {
         println!("Current path -> {}", path.display())
     }
-    // TODO: Seta para voltar para a pasta pai (caso exista)
 }
