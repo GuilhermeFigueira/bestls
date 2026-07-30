@@ -1,5 +1,6 @@
 mod file_entry;
 use file_entry::FileEntry;
+use std::{os::windows::prelude::*, path::PathBuf};
 
 use anyhow::{Context, Result};
 use std::{
@@ -8,6 +9,17 @@ use std::{
 };
 
 use crate::context::AppContext;
+
+pub fn is_hidden(file_path: &PathBuf) -> std::io::Result<bool> {
+    let metadata = fs::metadata(file_path)?;
+    let attributes = metadata.file_attributes();
+
+    if (attributes & 0x2) > 0 {
+        Ok(true)
+    } else {
+        Ok(false)
+    }
+}
 
 pub fn map_data(
     file: fs::DirEntry,
@@ -19,7 +31,7 @@ pub fn map_data(
         Ok(metadata) => {
             if show_all || context.config.display.show_hidden {
                 data.push(FileEntry::get(context, file, &metadata));
-            } else if !hf::is_hidden(&file.path()).unwrap_or(false) {
+            } else if !is_hidden(&file.path()).unwrap_or(false) {
                 data.push(FileEntry::get(context, file, &metadata));
             }
         }
