@@ -13,13 +13,13 @@ use unicode_ellipsis;
 #[derive(Debug, Tabled, Serialize)]
 pub struct FileEntry {
     #[tabled(rename = "Name")]
-    pub name: String,
+    pub(crate) name: String,
     #[tabled(rename = "Type")]
-    pub e_type: EntryType,
+    pub(crate) e_type: EntryType,
     #[tabled(rename = "Size B")]
-    pub size: String,
+    pub(crate) size: String,
     #[tabled(rename = "Modified")]
-    pub modified: String,
+    pub(crate) modified: String,
 }
 
 impl FileEntry {
