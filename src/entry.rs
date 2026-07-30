@@ -19,10 +19,8 @@ pub fn map_data(
         Ok(metadata) => {
             if show_all || context.config.display.show_hidden {
                 data.push(FileEntry::get(context, file, &metadata));
-            } else {
-                if !hf::is_hidden(&file.path()).unwrap_or(false) {
-                    data.push(FileEntry::get(context, file, &metadata));
-                }
+            } else if !hf::is_hidden(&file.path()).unwrap_or(false) {
+                data.push(FileEntry::get(context, file, &metadata));
             }
         }
         Err(e) => {
@@ -47,5 +45,4 @@ pub fn get_files(path: &Path, context: &AppContext, show_all: bool) -> Result<Ve
     }
 
     Ok(data)
-    // TODO: Flag para arquivos e pastas ocultas, atualmente sempre mostra pastas ocultas
 }

@@ -47,8 +47,6 @@ fn run() -> Result<()> {
     //Ensuring path is a directory
     ensure!(canonic_path.is_dir(), "Path is not a directory");
 
-    // TODO: Adicionar flags: --all
-
     if cli.json {
         print_json(&canonic_path, &context, cli.all)?;
     } else {
