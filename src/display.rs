@@ -5,7 +5,7 @@ use osc8::Hyperlink;
 use tabled::{
     Table,
     settings::{
-        Color, Style,
+        Alignment, Color, Style,
         object::{Columns, Rows},
     },
 };
@@ -24,7 +24,14 @@ pub fn print_table(path: &Path, context: &AppContext, show_all: bool) -> Result<
     let mut table = Table::new(files);
     table.with(Style::rounded());
     table.modify(Columns::first(), Color::FG_BRIGHT_CYAN);
-    table.modify(Columns::one(2), Color::FG_BRIGHT_MAGENTA);
+    table.modify(
+        Columns::one(1),
+        (Color::FG_BRIGHT_BLUE, Alignment::center()),
+    );
+    table.modify(
+        Columns::one(2),
+        (Color::FG_BRIGHT_MAGENTA, Alignment::right()),
+    );
     table.modify(Columns::one(3), Color::FG_BRIGHT_YELLOW);
     table.modify(Rows::first(), Color::FG_BRIGHT_GREEN);
     println!("{}", table);
