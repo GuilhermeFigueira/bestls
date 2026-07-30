@@ -50,10 +50,10 @@ fn run() -> Result<()> {
     // TODO: Adicionar flags: --all
 
     if cli.json {
-        print_json(&canonic_path, &context)?;
+        print_json(&canonic_path, &context, cli.all)?;
     } else {
         print_title(&canonic_path, &context);
-        print_table(&canonic_path, &context)?;
+        print_table(&canonic_path, &context, cli.all)?;
     }
     Ok(())
 }

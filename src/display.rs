@@ -10,15 +10,15 @@ use tabled::{
     },
 };
 
-pub fn print_json(path: &Path, context: &AppContext) -> Result<()> {
-    let files = get_files(path, context)?;
+pub fn print_json(path: &Path, context: &AppContext, show_all: bool) -> Result<()> {
+    let files = get_files(path, context, show_all)?;
     let json_files = serde_json::to_string(&files).context("Cannot parse JSON")?;
     println!("{}", json_files);
     Ok(())
 }
 
-pub fn print_table(path: &Path, context: &AppContext) -> Result<()> {
-    let files = get_files(path, context)?;
+pub fn print_table(path: &Path, context: &AppContext, show_all: bool) -> Result<()> {
+    let files = get_files(path, context, show_all)?;
     let mut table = Table::new(files);
     table.with(Style::rounded());
     table.modify(Columns::first(), Color::FG_BRIGHT_CYAN);
