@@ -1,9 +1,10 @@
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
 use std::{
     fmt, fs,
     path::{Path, PathBuf},
 };
+
+use anyhow::{Context, Result};
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Debug, Serialize)]
 #[serde(default)]

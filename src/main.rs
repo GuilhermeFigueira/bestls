@@ -3,15 +3,20 @@ mod context;
 mod display;
 mod entry;
 
-use crate::cli::{Cli, ConfigAction};
-use crate::context::{AppContext, Config};
-use crate::display::{print_json, print_table, print_title};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
-use anyhow::{Context, Ok, Result, ensure};
+use anyhow::{Context, Result, ensure};
 use clap::Parser;
 use owo_colors::OwoColorize;
-use std::path::Path;
-use std::{fs, path::PathBuf};
+
+use crate::{
+    cli::{Cli, ConfigAction},
+    context::{AppContext, Config},
+    display::{print_json, print_table, print_title},
+};
 
 fn main() {
     if let Err(e) = run() {

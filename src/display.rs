@@ -1,7 +1,7 @@
-use crate::{context::AppContext, entry::get_files};
-use anyhow::{Context, Ok, Result};
-use osc8::Hyperlink;
 use std::path::{Path, PathBuf};
+
+use anyhow::{Context, Result};
+use osc8::Hyperlink;
 use tabled::{
     Table,
     settings::{
@@ -9,6 +9,8 @@ use tabled::{
         object::{Columns, Rows},
     },
 };
+
+use crate::{context::AppContext, entry::get_files};
 
 pub fn print_json(path: &Path, context: &AppContext, show_all: bool) -> Result<()> {
     let files = get_files(path, context, show_all)?;

@@ -1,12 +1,14 @@
 mod file_entry;
-use file_entry::FileEntry;
-use std::{fs::Metadata, os::windows::prelude::*};
-
-use anyhow::{Context, Result};
 use std::{
-    fs::{self},
+    fs::{
+        Metadata, {self},
+    },
+    os::windows::prelude::*,
     path::Path,
 };
+
+use anyhow::{Context, Result};
+use file_entry::FileEntry;
 
 use crate::context::AppContext;
 

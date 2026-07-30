@@ -1,9 +1,9 @@
 mod config;
-pub(crate) use config::Config;
+use std::{fs, path::PathBuf};
 
 use anyhow::{Context, Result};
+pub(crate) use config::Config;
 use directories::ProjectDirs;
-use std::{fs, path::PathBuf};
 use supports_hyperlinks::Stream;
 
 pub struct AppContext {
