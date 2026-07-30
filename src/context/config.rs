@@ -90,7 +90,7 @@ impl Default for Display {
     fn default() -> Self {
         Self {
             show_hidden: true,
-            show_folder_size: true,
+            show_folder_size: false,
             file_name_length: 25,
         }
     }
