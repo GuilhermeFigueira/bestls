@@ -23,6 +23,6 @@ jobs:
       - name: Create GitHub Release and upload binary
         uses: softprops/action-gh-release@v2
         with:
-          files: target/release/bestls.exe
+          files: target/release/bls.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
