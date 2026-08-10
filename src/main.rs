@@ -35,19 +35,16 @@ fn run() -> Result<()> {
     };
 
     let path = cli.path.unwrap_or(PathBuf::from("."));
-    let canonic_path = dunce::canonicalize(path).context("Error canonicalizing path")?;
 
     // Ensuring path exists
     ensure!(
-        fs::exists(&canonic_path).with_context(|| {
-            format!(
-                "Error checking if selected path exists: {:?}",
-                &canonic_path
-            )
-        })?,
+        fs::exists(&path)
+            .with_context(|| { format!("Error checking if selected path exists: {:?}", &path) })?,
         "Path does not exist: {:?}",
-        canonic_path
+        path
     );
+
+    let canonic_path = dunce::canonicalize(path).context("Error canonicalizing path")?;
 
     //Ensuring path is a directory
     ensure!(canonic_path.is_dir(), "Path is not a directory");
